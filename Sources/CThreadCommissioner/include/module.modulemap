@@ -1,0 +1,4 @@
+module CThreadCommissioner {
+    umbrella header "ThreadCommissioner.h"
+    export *
+}
