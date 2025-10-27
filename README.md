@@ -1,4 +1,4 @@
-# ThreadCommissioner
+# ThreadCommissionerKit
 
 A Swift package for Thread 1.4 Commercial Commissioning on iOS/macOS. Automatically retrieve Thread network credentials from Thread Border Routers using EC-JPAKE authentication with ephemeral admin codes.
 
@@ -24,7 +24,7 @@ A Swift package for Thread 1.4 Commercial Commissioning on iOS/macOS. Automatica
 Add the package to your Xcode project:
 
 1. In Xcode, open **File → Add Package Dependencies**
-2. Enter the repository URL for ThreadCommissioner
+2. Enter the repository URL for ThreadCommissionerKit
 3. Select the latest version or main branch
 4. Add the package to your app target (iOS or macOS)
 
@@ -50,7 +50,7 @@ To use Bonjour/mDNS and local network access, you must include these keys in you
 ### Basic Example
 
 ```swift
-import ThreadCommissioner
+import ThreadCommissionerKit
 
 @MainActor
 func discoverAndCommission(adminCode: String) async {
@@ -124,10 +124,12 @@ It should work with any Thread 1.4 compliant Border Router that supports commiss
 ### SmartThings
 
 1. Open SmartThings app
-2. Navigate to your Thread device
-3. Tap "Thread Network" → "Commissioner"
-4. Generate a new ephemeral admin code
-5. Use the code within its validity period (typically 5-10 minutes)
+2. Navigate to your Thread hub
+3. Navigate to hub settings
+4. Tap "Manage Thread Network"
+6. Tap "Unify Thread Network" and then select "Share this hub's network to allow other Border Routers to join it"
+7. Tap "Start Sharing"
+8. Use the code shown within its validity period (10 minutes)
 
 ### Other Border Routers
 
@@ -142,8 +144,11 @@ The package consists of three main components:
 mDNS/Bonjour service discovery for Thread Border Routers:
 
 ```swift
-let discovery = HubDiscovery(hubType: .s200)
-let hub = await discovery.waitForAdvertisingThreadHub()
+ let threadCommissioner = ThreadCommissioner()
+ guard let threadHub = await self.threadCommissioner.seachForHub(timeout: 10) else {
+            showAlert(title: "Search Timeout", message: "Ensure you have selected to share network in hub's app")
+            return
+ }
 ```
 
 ### 2. ThreadDTLSClient
@@ -151,8 +156,7 @@ let hub = await discovery.waitForAdvertisingThreadHub()
 DTLS 1.2 client with EC-JPAKE support using mbedTLS:
 
 ```swift
-let dtlsClient = ThreadDTLSClient()
-try await dtlsClient.connect(host: ip, port: port, adminCode: adminCode)
+try await self.threadCommissioner.connectToHub(threadHub: threadHub, adminCode: adminCode)
 ```
 
 ### 3. ThreadCommissioner
@@ -160,9 +164,10 @@ try await dtlsClient.connect(host: ip, port: port, adminCode: adminCode)
 CoAP protocol implementation for Thread Commissioner operations:
 
 ```swift
-let commissioner = ThreadCommissioner()
-try await commissioner.connect(borderRouterIP: ip, port: port, adminCode: code)
-let dataset = try await commissioner.getActiveDataset()
+ guard let dataset = await self.threadCommissioner.getThreadDataset() else {
+               showAlert(title: "Search Timeout", message: "Ensure you have selected to share network in hub's app")
+               return
+ }
 ```
 
 ## Dependencies

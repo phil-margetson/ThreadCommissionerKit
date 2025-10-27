@@ -4,15 +4,15 @@
 import PackageDescription
 
 let package = Package(
-    name: "ThreadCommissioner",
+    name: "ThreadCommissionerKit",
     platforms: [
         .iOS(.v15),
         .macOS(.v12)
     ],
     products: [
         .library(
-            name: "ThreadCommissioner",
-            targets: ["ThreadCommissioner"]
+            name: "ThreadCommissionerKit",
+            targets: ["ThreadCommissionerKit"]
         ),
     ],
     targets: [
@@ -36,8 +36,9 @@ let package = Package(
 
         // Main library target
         .target(
-            name: "ThreadCommissioner",
+            name: "ThreadCommissionerKit",
             dependencies: ["CThreadCommissioner", "mbedTLS"],
+            path: "Sources/ThreadCommissionerKit",
             cSettings: [
                 .headerSearchPath("../../Frameworks/mbedTLS.xcframework/ios-arm64/Headers"),
                 .headerSearchPath("../../Frameworks/mbedTLS.xcframework/ios-arm64_x86_64-simulator/Headers")
@@ -48,8 +49,9 @@ let package = Package(
         ),
 
         .testTarget(
-            name: "ThreadCommissionerTests",
-            dependencies: ["ThreadCommissioner"]
+            name: "ThreadCommissionerKitTests",
+            dependencies: ["ThreadCommissionerKit"],
+            path: "Tests/ThreadCommissionerKitTests"
         ),
     ]
 )
