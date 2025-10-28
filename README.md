@@ -1,6 +1,6 @@
 # ThreadCommissionerKit
 
-A Swift package for Thread 1.4 Commercial Commissioning on iOS/macOS. Automatically retrieve Thread network credentials from Thread Border Routers using EC-JPAKE authentication with ephemeral admin codes.
+A Swift package for Thread 1.4 commissioning on iOS/macOS. Automatically retrieve Thread network credentials from Thread Border Routers using mDNS and EC-JPAKE authentication with ephemeral admin codes(ePSKc) over DTLS.
 
 ## Features
 
@@ -115,7 +115,7 @@ public struct Dataset {
 
 This library has been tested with:
 
-- Aeotec SmartThings hub V2 (Thread 1.4)
+    - Aeotec SmartThings hub V2 (Thread 1.4)
 
 It should work with any Thread 1.4 compliant Border Router that supports commissioning using the ePSKc flow.
 
