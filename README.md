@@ -1,6 +1,6 @@
 # ThreadCommissionerKit
 
-A Swift package for Thread 1.4 commissioning on iOS/macOS. Automatically retrieve Thread network credentials from Thread Border Routers using mDNS and EC-JPAKE authentication with ephemeral admin codes(ePSKc) over DTLS.
+A Swift package for Thread 1.4 using credentials sharing (TCS) on iOS/macOS. Automatically retrieve Thread network credentials from Thread Border Routers using mDNS and EC-JPAKE authentication with ephemeral admin codes(ePSKc) over DTLS.
 
 ## Features
 
