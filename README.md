@@ -224,7 +224,7 @@ Contributions are welcome! Please feel free to submit issues or pull requests.
 This project is dual‑licensed:
 
 - **Non-Commercial License (default)** – Free for personal, educational, or other non-commercial use. See [LICENSE](LICENSE).
-- **Commercial License** – Required for any commercial, proprietary, or closed-source use. See [LICENSE.COM](LICENSE.COM) for terms, or contact [threadcommissionerkit@gmail.com](mailto:threadcommissionerkit@gmail.com).
+- **Commercial License** – Required for any commercial, proprietary, or closed-source use. See [COMMERICAL-LICENSE.md](COMMERICAL-LICENSE.md) for terms, or contact [threadcommissionerkit@gmail.com](mailto:threadcommissionerkit@gmail.com).
 
 Typical commercial licences start at **£499 one-time** or **£349/year** including updates and support. Volume and enterprise terms available on request.
 
