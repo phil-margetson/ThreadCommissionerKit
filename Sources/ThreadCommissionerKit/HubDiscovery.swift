@@ -9,6 +9,21 @@ import Foundation
 import Security
 import Network
 
+enum HubDiscoveryError: Error, LocalizedError {
+    case notFound
+    case addressResolution
+
+    
+    var errorDescription: String? {
+        switch self {
+        case .notFound:
+            return "Hub was not found during specified time period"
+        case .addressResolution:
+            return "IP address or port could not be resolved for broadcasting hub"
+        }
+    }
+}
+
 /// Main class for discovering Thread Border Routers via mDNS
 @MainActor
 final class HubDiscovery: NSObject, NetServiceDelegate {
@@ -19,7 +34,6 @@ final class HubDiscovery: NSObject, NetServiceDelegate {
     private var ipFoundContinuation: AsyncStream<String>.Continuation!
     
     // Stream for commissioner discovery (IP + port)
-    
     private var commissionerStream: AsyncStream<(ThreadHub)>!
     private var commissionerContinuation: AsyncStream<(ThreadHub)>.Continuation!
     private(set) public var threadHub: ThreadHub?
@@ -35,40 +49,6 @@ final class HubDiscovery: NSObject, NetServiceDelegate {
         self.commissionerContinuation = commissionerCont
         print("start commissioning browser")
         self.startCommissioningBrowser()
-        
-        
-//        DispatchQueue.main.async {
-//            print("🧪 Testing Thread Commissioner...")
-//            
-//            Task {
-//                let commissioner = ThreadCommissioner()
-//                do {
-//                    
-//                    let adminCode = "679434847"  // Admin code from SmartThings (decimal)
-//                    
-//                    print("🔐 Admin Code (decimal): \(adminCode)")
-//                    
-//                    print("waiting for hub")
-//                    
-//                    guard let discoveredThreadHub = await self.waitForAdvertisingThreadHub() else {
-//                        print("hub not found (waitForAdvertisingHub returned nil)")
-//                        return
-//                    }
-//                    print("discovered thread hub: \(discoveredThreadHub)")
-//                    
-//                    // Connect to Border Router with derived ePSKc
-//                    try await commissioner.connect(borderRouterIP: discoveredThreadHub.IP, port: discoveredThreadHub.port, adminCode: adminCode)
-//                    
-//                    // Get Thread network credentials
-//                    let threadDetails = try await commissioner.getActiveDataset()
-//                    print("thread details:", threadDetails.panid)
-//                    print(threadDetails)
-//                    commissioner.close()
-//                } catch {
-//                    print("❌ Commissioner Error: \(error)")
-//                }
-//            }
-//        }
     }
     
     private func startCommissioningBrowser() {

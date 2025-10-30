@@ -7,6 +7,7 @@
 
 import Foundation
 
+
 @MainActor
 public class ThreadCommissioner {
     
@@ -19,29 +20,31 @@ public class ThreadCommissioner {
     
     ///Starts a NWBrowser search for a device advertising the meshcop-e service- must be started in third party app first
     /// - Parameter timeout: The time in seconds for which to continue scanning mDNS for advertising hub
-    /// - Returns: ThreadHub containing the found IP address and port to start the DTLS session.
-    public func searchForHub(timeout: TimeInterval) async -> ThreadHub? {
+    /// - Returns: A `ThreadHub` containing the discovered IP address and port
+    ///   used to start the DTLS session, or `nil` if the timeout expires.
+    /// - Throws: `TimeoutError` if no hub is found within the specified period.
+    public func searchForHub(timeout: TimeInterval) async throws -> ThreadHub? {
         guard timeout > 0 else {
             return await browser.waitForAdvertisingThreadHub()
         }
-        
-        let timeoutNanoseconds = UInt64(max(timeout, 0) * 1_000_000_000)
-        
-        return await withTaskGroup(of: ThreadHub?.self, returning: ThreadHub?.self) { group in
+        let timeoutNanoseconds = UInt64(timeout * 1_000_000_000)
+        return try await withThrowingTaskGroup(of: ThreadHub?.self, returning: ThreadHub?.self) { group in
             group.addTask { await self.browser.waitForAdvertisingThreadHub() }
             group.addTask {
-                try? await Task.sleep(nanoseconds: timeoutNanoseconds)
+                try? await Task.sleep(nanoseconds: timeoutNanoseconds) // timeout task
                 return nil
             }
-            
+
             defer { group.cancelAll() }
-            
-            while let result = await group.next() {
+
+            while let result = try await group.next() {
                 if let hub = result {
-                    return hub
+                    return hub     // found hub
+                } else {
+                    throw HubDiscoveryError.notFound // timeout triggered
                 }
             }
-            return nil
+            throw HubDiscoveryError.notFound
         }
     }
     
