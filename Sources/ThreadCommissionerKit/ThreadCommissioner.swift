@@ -105,13 +105,6 @@ public class ThreadCommissioner {
             listing "\(expectedService)".
             """)
         }
-        
-        if bundle.object(forInfoDictionaryKey: "NSBonjourUsageDescription") == nil {
-            assertionFailure("""
-            ThreadCommissioner needs NSBonjourUsageDescription added to the host app’s Info.plist \
-            explaining why Bonjour service discovery is required.
-            """)
-        }
         #endif
     }
 }
